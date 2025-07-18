@@ -1,0 +1,10 @@
+#toml
+*.toml
+
+# /tmp
+/tmp
+
+# /bin
+/bin
+
+.env
