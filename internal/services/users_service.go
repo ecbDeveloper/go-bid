@@ -6,12 +6,16 @@ import (
 
 	"github.com/ecbDeveloper/go-bid/internal/store/pgstore"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var ErrDuplciateEmailOrPassword = errors.New("username or email already exists")
+var (
+	ErrDuplciateEmailOrUsername = errors.New("username or email already exists")
+	ErrInvalidCredentials       = errors.New("invalid credential")
+)
 
 type UserService struct {
 	pool    *pgxpool.Pool
@@ -45,11 +49,31 @@ func (us *UserService) CreateUser(ctx context.Context, userName, email, password
 		// errors.As verifica se o erro é do mesmo tipo que o tipo indicado,
 		// e caso seja, conseguimos acessar as propriedades desse tipo de erro
 		if errors.As(err, *pgErr) && pgErr.Code == "23505" {
-			return uuid.UUID{}, ErrDuplciateEmailOrPassword
+			return uuid.UUID{}, ErrDuplciateEmailOrUsername
 		}
 
 		return uuid.UUID{}, err
 	}
 
 	return id, nil
+}
+
+func (us *UserService) AuthenticateUser(ctx context.Context, email, password string) (uuid.UUID, error) {
+	user, err := us.queries.GetUserByEmail(ctx, email)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return uuid.UUID{}, ErrInvalidCredentials
+		}
+		return uuid.UUID{}, err
+	}
+
+	err = bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(password))
+	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			return uuid.UUID{}, ErrInvalidCredentials
+		}
+		return uuid.UUID{}, err
+	}
+
+	return user.ID, nil
 }

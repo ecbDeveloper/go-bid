@@ -1,9 +1,8 @@
-package utils
+package jsonutils
 
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/ecbDeveloper/go-bid/internal/validator"
@@ -14,7 +13,7 @@ import (
 func EncodeJson[T any](w http.ResponseWriter, statusCode int, data T) error {
 	w.Header().Set("Content-Type", "Application/json")
 	w.WriteHeader(statusCode)
-	log.Println(data)
+
 	if err := json.NewEncoder(w).Encode(data); err != nil {
 		return fmt.Errorf("failed to encode json %w", err)
 	}

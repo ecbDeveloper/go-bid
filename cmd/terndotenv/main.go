@@ -23,7 +23,7 @@ func main() {
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		fmt.Println("Command execution falied:", err)
+		fmt.Println("Command execution faleid:", err)
 		fmt.Println("Output:", string(output))
 		panic(err)
 	}
