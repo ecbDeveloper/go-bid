@@ -18,13 +18,20 @@ func (api *Api) BindRoutes() {
 	api.Router.Route("/api", func(r chi.Router) {
 		// r.Get("/csrftoken", api.HandleGetCSRFtoken)
 		api.bindUsersRoutes(r)
+		api.bindProductsRoutes(r)
 	})
 }
 
 func (api *Api) bindUsersRoutes(r chi.Router) {
-	r.Route("/users/", func(r chi.Router) {
+	r.Route("/users", func(r chi.Router) {
 		r.Post("/signup", api.handleSignupUser)
 		r.Post("/login", api.handleLoginUser)
 		r.With(api.AuthMiddeware).Post("/logout", api.handleLogoutUser)
+	})
+}
+
+func (api *Api) bindProductsRoutes(r chi.Router) {
+	r.Route("/products", func(r chi.Router) {
+		r.Post("/", api.handleCreateProduct)
 	})
 }

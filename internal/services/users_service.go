@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/ecbDeveloper/go-bid/internal/store/pgstore"
+	"github.com/ecbDeveloper/go-bid/internal/db/sqlc"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -19,13 +19,13 @@ var (
 
 type UserService struct {
 	pool    *pgxpool.Pool
-	queries *pgstore.Queries
+	queries *sqlc.Queries
 }
 
 func NewUserService(pool *pgxpool.Pool) UserService {
 	return UserService{
 		pool:    pool,
-		queries: pgstore.New(pool),
+		queries: sqlc.New(pool),
 	}
 }
 
@@ -35,7 +35,7 @@ func (us *UserService) CreateUser(ctx context.Context, userName, email, password
 		return uuid.UUID{}, err
 	}
 
-	args := pgstore.CreateUserParams{
+	args := sqlc.CreateUserParams{
 		UserName:     userName,
 		Email:        email,
 		PasswordHash: hashedPassword,
