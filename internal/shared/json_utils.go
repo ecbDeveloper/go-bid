@@ -1,11 +1,9 @@
-package jsonutils
+package shared
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"github.com/ecbDeveloper/go-bid/internal/validator"
 )
 
 // Essa função pega os dados que nós queremos retornar indepente do tipo
@@ -24,7 +22,7 @@ func EncodeJson[T any](w http.ResponseWriter, statusCode int, data T) error {
 // Essa função recebe o corpo da requisição faz o unmarshall dos dados para a struct
 // que satisfaz a interface validator, valida os dados recebidos
 // e nos retorna a struct pra lidarmos com ela, por exemplo inserir no banco.
-func DecodeValidJson[T validator.Validator](r *http.Request) (T, map[string]string, error) {
+func DecodeValidJson[T Validator](r *http.Request) (T, map[string]string, error) {
 	var data T
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
