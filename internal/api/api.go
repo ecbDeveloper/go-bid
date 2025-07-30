@@ -7,7 +7,8 @@ import (
 )
 
 type Api struct {
-	Router      *chi.Mux //criamos o Router, ao usarmos r := chi.NewRouter() == var r *chi.Mux
-	UserService services.UserService
-	Sessions    *scs.SessionManager
+	Router         *chi.Mux //criamos o Router, ao usarmos r := chi.NewRouter() == var r *chi.Mux
+	UserService    services.UserService
+	ProductService services.ProductService
+	Sessions       *scs.SessionManager
 }

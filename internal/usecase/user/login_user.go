@@ -3,7 +3,7 @@ package user
 import (
 	"context"
 
-	"github.com/ecbDeveloper/go-bid/internal/validator"
+	"github.com/ecbDeveloper/go-bid/internal/shared"
 )
 
 type LoginUserReq struct {
@@ -11,13 +11,13 @@ type LoginUserReq struct {
 	Password string `json:"password"`
 }
 
-func (req LoginUserReq) Valid(ctx context.Context) validator.ErrorsValidator {
-	var eval validator.ErrorsValidator
+func (req LoginUserReq) Valid(ctx context.Context) shared.ErrorsValidator {
+	var eval shared.ErrorsValidator
 
-	eval.CheckField(validator.NotBlank(req.Email), "email", "this field cannot be empty")
-	eval.CheckField(validator.NotBlank(req.Password), "password", "this field cannot be empty")
+	eval.CheckField(shared.NotBlank(req.Email), "email", "this field cannot be empty")
+	eval.CheckField(shared.NotBlank(req.Password), "password", "this field cannot be empty")
 
-	eval.CheckField(validator.IsEmail(req.Email), "email", "must be a valid email")
+	eval.CheckField(shared.IsEmail(req.Email), "email", "must be a valid email")
 
 	return eval
 }
