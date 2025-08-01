@@ -10,5 +10,6 @@ type Api struct {
 	Router         *chi.Mux //criamos o Router, ao usarmos r := chi.NewRouter() == var r *chi.Mux
 	UserService    services.UserService
 	ProductService services.ProductService
+	BidService     services.BidService
 	Sessions       *scs.SessionManager
 }
