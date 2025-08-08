@@ -19,9 +19,7 @@
 <!-- default option, no dependency badges. -->
 
 </div>
-<br>
-
---- 
+<br> 
 ## Overview
 A real-time auction API built in **Golang**, leveraging **WebSocket** for instant bid communication between participants and **channels** to handle concurrency safely and efficiently.
 
@@ -41,8 +39,6 @@ A real-time auction API built in **Golang**, leveraging **WebSocket** for instan
 - Native Go channels
 - UUIDs via [google/uuid](https://github.com/google/uuid)
 
----
-
 ## Table of Contents
 
 - [Table of Contents](#table-of-contents)
@@ -55,14 +51,6 @@ A real-time auction API built in **Golang**, leveraging **WebSocket** for instan
     - [Installation](#installation)
     - [Usage](#usage)
     - [Testing](#testing)
-
----
-
-## Features
-
-<code>❯ REPLACE-ME</code>
-
----
 
 ## Project Structure
 
@@ -408,8 +396,6 @@ A real-time auction API built in **Golang**, leveraging **WebSocket** for instan
 	</details>
 </details>
 
----
-
 ## Getting Started
 
 ### Prerequisites
@@ -476,5 +462,3 @@ go test ./...
 
 [back-to-top]: https://img.shields.io/badge/-BACK_TO_TOP-151515?style=flat-square
 
-
----
