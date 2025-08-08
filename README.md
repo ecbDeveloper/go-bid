@@ -18,8 +18,6 @@
 
 <!-- default option, no dependency badges. -->
 
-</div>
-<br> 
 ## Overview
 A real-time auction API built in **Golang**, leveraging **WebSocket** for instant bid communication between participants and **channels** to handle concurrency safely and efficiently.
 
