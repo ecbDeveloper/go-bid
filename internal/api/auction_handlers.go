@@ -46,13 +46,6 @@ func (api *Api) handleSubscribeUserToAuction(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if userId == product.SellerID {
-		shared.EncodeJson(w, http.StatusUnprocessableEntity, map[string]string{
-			"error": "the product seller can't place a bid to on it",
-		})
-		return
-	}
-
 	api.AuctionLobby.Lock()
 	room, ok := api.AuctionLobby.Rooms[productId]
 	api.AuctionLobby.Unlock()
@@ -69,6 +62,16 @@ func (api *Api) handleSubscribeUserToAuction(w http.ResponseWriter, r *http.Requ
 		shared.EncodeJson(w, http.StatusInternalServerError, map[string]string{
 			"error": "could not upgrade connection to a websocket protocol",
 		})
+		return
+	}
+
+	if userId == product.SellerID {
+		conn.WriteJSON(services.Message{
+			Kind:    services.FailedToPlaceBid,
+			Message: "the product seller can't place a bid on it",
+			UserId:  userId,
+		})
+		conn.Close()
 		return
 	}
 
