@@ -1,14 +1,16 @@
 package api
 
 import (
+	"context"
 	"net/http"
 
+	"github.com/ecbDeveloper/go-bid/internal/services"
 	"github.com/ecbDeveloper/go-bid/internal/shared"
 	"github.com/ecbDeveloper/go-bid/internal/usecase/product"
 	"github.com/google/uuid"
 )
 
-func (api *Api) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
+func (api *Api) handleCreateProductAuction(w http.ResponseWriter, r *http.Request) {
 	data, problems, err := shared.DecodeValidJson[product.CreateProductParams](r)
 	if err != nil {
 		shared.EncodeJson(w, http.StatusUnprocessableEntity, problems)
@@ -23,7 +25,7 @@ func (api *Api) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := api.ProductService.CreateProduct(
+	productId, err := api.ProductService.CreateProduct(
 		r.Context(),
 		userID,
 		data.ProductName,
@@ -37,8 +39,17 @@ func (api *Api) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
+	ctx, _ := context.WithDeadline(context.Background(), data.AuctionEnd)
+	auctionRoom := services.NewAuctionRoom(ctx, productId, api.BidService)
+
+	go auctionRoom.Run()
+
+	api.AuctionLobby.Lock()
+	api.AuctionLobby.Rooms[productId] = auctionRoom
+	api.AuctionLobby.Unlock()
+
 	shared.EncodeJson(w, http.StatusOK, map[string]any{
-		"message":    "product created successfully",
-		"product_id": id,
+		"message":    "Auction has started with success",
+		"product_id": productId,
 	})
 }

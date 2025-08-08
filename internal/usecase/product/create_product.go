@@ -31,7 +31,7 @@ func (req CreateProductParams) Valid(ctx context.Context) shared.ErrorsValidator
 	eval.CheckField(req.Baseprice > 0, "baseprice", "this field must be greater then 0")
 
 	eval.CheckField(
-		req.AuctionEnd.Sub(time.Now()) <= minAuctionDuration,
+		req.AuctionEnd.Sub(time.Now()) > minAuctionDuration,
 		"auction_end",
 		"the auction duration must be at least 2 hours",
 	)

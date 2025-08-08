@@ -40,7 +40,9 @@ func (api *Api) bindProductsRoutes(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(api.AuthMiddeware)
 			//CRUD COMPLETO PRA PRODUTO
-			r.Post("/", api.handleCreateProduct)
+			r.Post("/", api.handleCreateProductAuction)
+
+			r.Get("/ws/subscriber/{productId}", api.handleSubscribeUserToAuction)
 		})
 	})
 }

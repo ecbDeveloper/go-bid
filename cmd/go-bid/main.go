@@ -14,6 +14,7 @@ import (
 	"github.com/ecbDeveloper/go-bid/internal/services"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/gorilla/websocket"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 )
@@ -56,6 +57,12 @@ func main() {
 		ProductService: services.NewProductService(pool),
 		BidService:     services.NewBidService(pool),
 		Sessions:       s,
+		WsUpgrader: websocket.Upgrader{
+			CheckOrigin: func(r *http.Request) bool { return true },
+		},
+		AuctionLobby: services.AuctionsLobby{
+			Rooms: make(map[uuid.UUID]*services.AuctionRoom),
+		},
 	}
 
 	api.BindRoutes()
