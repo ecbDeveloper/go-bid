@@ -10,6 +10,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// handleSubscribeUserToAuction atualiza a conexão para websocet, assim inscrevendo
+// o usuário em uma auction room para ele poder fazer lances por um produto
 func (api *Api) handleSubscribeUserToAuction(w http.ResponseWriter, r *http.Request) {
 	rawProductId := chi.URLParam(r, "productId")
 

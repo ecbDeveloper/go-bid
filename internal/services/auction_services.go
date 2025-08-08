@@ -49,7 +49,7 @@ type AuctionRoom struct {
 	Unregister chan *Client
 	Clients    map[uuid.UUID]*Client
 
-	BidSerivice BidService
+	BidService BidService
 }
 
 func (r *AuctionRoom) registerClient(c *Client) {
@@ -62,11 +62,13 @@ func (r *AuctionRoom) unregisterClient(c *Client) {
 	delete(r.Clients, c.UserId)
 }
 
+// broadcastMessage envia as mensagens do chan broadcast para os usuários
+// registrados na auction room
 func (r *AuctionRoom) broadcastMessage(m Message) {
 	slog.Info("New message received", "RoomId", r.Id, "message", m.Message, "user_id", m.UserId)
 	switch m.Kind {
 	case PlaceBid:
-		bid, err := r.BidSerivice.PlaceBid(r.Context, r.Id, m.UserId, m.Amount)
+		bid, err := r.BidService.PlaceBid(r.Context, r.Id, m.UserId, m.Amount)
 		if err != nil {
 			if errors.Is(err, ErrBidIsTooLow) {
 				if client, ok := r.Clients[m.UserId]; ok {
@@ -98,6 +100,7 @@ func (r *AuctionRoom) broadcastMessage(m Message) {
 	}
 }
 
+// Run cria a auction room para usuários conseguirem dar seus lances no produto
 func (r *AuctionRoom) Run() {
 	slog.Info("Auction has begun", "auctionId", r.Id)
 
@@ -130,13 +133,13 @@ func (r *AuctionRoom) Run() {
 
 func NewAuctionRoom(ctx context.Context, id uuid.UUID, bidService BidService) *AuctionRoom {
 	return &AuctionRoom{
-		Id:          id,
-		Broadcast:   make(chan Message),
-		Register:    make(chan *Client),
-		Unregister:  make(chan *Client),
-		Clients:     make(map[uuid.UUID]*Client),
-		Context:     ctx,
-		BidSerivice: bidService,
+		Id:         id,
+		Broadcast:  make(chan Message),
+		Register:   make(chan *Client),
+		Unregister: make(chan *Client),
+		Clients:    make(map[uuid.UUID]*Client),
+		Context:    ctx,
+		BidService: bidService,
 	}
 }
 
