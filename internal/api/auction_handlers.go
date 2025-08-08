@@ -23,7 +23,7 @@ func (api *Api) handleSubscribeUserToAuction(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	_, err = api.ProductService.GetProduct(r.Context(), productId)
+	product, err := api.ProductService.GetProduct(r.Context(), productId)
 	if err != nil {
 		if errors.Is(err, services.ErrProductNotFound) {
 			shared.EncodeJson(w, http.StatusNotFound, map[string]string{
@@ -42,6 +42,13 @@ func (api *Api) handleSubscribeUserToAuction(w http.ResponseWriter, r *http.Requ
 	if !ok {
 		shared.EncodeJson(w, http.StatusInternalServerError, map[string]string{
 			"error": "unexpected internal server error",
+		})
+		return
+	}
+
+	if userId == product.SellerID {
+		shared.EncodeJson(w, http.StatusUnprocessableEntity, map[string]string{
+			"error": "the product seller can't place a bid to on it",
 		})
 		return
 	}
