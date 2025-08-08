@@ -37,11 +37,9 @@ func (bs *BidService) PlaceBid(
 		return sqlc.Bid{}, err
 	}
 
-	highestBid, err := bs.queries.GetHighestBidByProductId(ctx, productId)
+	highestBid, err := bs.GetHighestBidByProductId(ctx, productId)
 	if err != nil {
-		if !errors.Is(err, pgx.ErrNoRows) {
-			return sqlc.Bid{}, err
-		}
+		return sqlc.Bid{}, err
 	}
 
 	if bidAmount <= product.Baseprice || bidAmount <= highestBid.BidAmount {
@@ -69,4 +67,15 @@ func (bs *BidService) GetAllBidsByProductId(ctx context.Context, productId uuid.
 	}
 
 	return bids, nil
+}
+
+func (bs *BidService) GetHighestBidByProductId(ctx context.Context, productId uuid.UUID) (sqlc.Bid, error) {
+	highestBid, err := bs.queries.GetHighestBidByProductId(ctx, productId)
+	if err != nil {
+		if !errors.Is(err, pgx.ErrNoRows) {
+			return sqlc.Bid{}, err
+		}
+	}
+
+	return highestBid, nil
 }

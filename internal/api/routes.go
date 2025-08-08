@@ -19,6 +19,7 @@ func (api *Api) BindRoutes() {
 		// r.Get("/csrftoken", api.HandleGetCSRFtoken)
 		api.bindUsersRoutes(r)
 		api.bindProductsRoutes(r)
+		api.bindBidsRoutes(r)
 	})
 }
 
@@ -39,10 +40,18 @@ func (api *Api) bindProductsRoutes(r chi.Router) {
 	r.Route("/products", func(r chi.Router) {
 		r.Group(func(r chi.Router) {
 			r.Use(api.AuthMiddeware)
-			//CRUD COMPLETO PRA PRODUTO
+
 			r.Post("/", api.handleCreateProductAuction)
 
 			r.Get("/ws/subscriber/{productId}", api.handleSubscribeUserToAuction)
 		})
+
+		r.Get("/", api.handleGetAllProducts)
+	})
+}
+
+func (api *Api) bindBidsRoutes(r chi.Router) {
+	r.Route("/bids", func(r chi.Router) {
+		r.Get("/highest/{productId}", api.handleGetHighestBidByProductId)
 	})
 }
