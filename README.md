@@ -423,15 +423,8 @@ Build go-bid from the source and intsall dependencies:
 
 3. **Install the dependencies:**
 
-<!-- SHIELDS BADGE CURRENTLY DISABLED -->
-	<!-- [![go modules][go modules-shield]][go modules-link] -->
-	<!-- REFERENCE LINKS -->
-	<!-- [go modules-shield]: https://img.shields.io/badge/Go-00ADD8.svg?style={badge_style}&logo=go&logoColor=white -->
-	<!-- [go modules-link]: https://golang.org/ -->
-
-	**Using [go modules](https://golang.org/):**
-
 	```sh
+	❯ go mod tidy
 	❯ go build
 	```
 
