@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	"github.com/ecbDeveloper/go-bid/internal/services"
 	"github.com/ecbDeveloper/go-bid/internal/shared"
@@ -52,4 +53,29 @@ func (api *Api) handleCreateProductAuction(w http.ResponseWriter, r *http.Reques
 		"message":    "Auction has started with success",
 		"product_id": productId,
 	})
+}
+
+func (api *Api) handleGetAllProducts(w http.ResponseWriter, r *http.Request) {
+	pageStr := r.URL.Query().Get("page")
+
+	page := 1
+
+	if pageStr != "" {
+		p, err := strconv.Atoi(pageStr)
+		page = p
+		if err != nil {
+			shared.EncodeJson(w, http.StatusBadRequest, map[string]string{
+				"error": "page has to be a valid number",
+			})
+		}
+	}
+
+	products, err := api.ProductService.GetAllProducts(r.Context(), 10, int32(page))
+	if err != nil {
+		shared.EncodeJson(w, http.StatusInternalServerError, map[string]string{
+			"error": "unexpected internal server error",
+		})
+	}
+
+	shared.EncodeJson(w, http.StatusOK, products)
 }

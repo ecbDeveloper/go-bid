@@ -62,3 +62,18 @@ func (ps *ProductService) GetProduct(ctx context.Context, productId uuid.UUID) (
 	return product, nil
 
 }
+
+func (ps *ProductService) GetAllProducts(ctx context.Context, limit, page int32) ([]sqlc.Product, error) {
+	pagination := sqlc.GetAllProductsParams{
+		Limit:  limit,
+		Offset: (page - 1) * limit,
+	}
+	products, err := ps.queries.GetAllProducts(ctx, pagination)
+	if err != nil {
+		if !errors.Is(err, pgx.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return products, nil
+}
